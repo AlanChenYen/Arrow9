@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Puzzle Game - 9x9</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .grid { display: grid; gap: 5px; }
+        .cell { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; }
+        .cell-1 { background-color: #e0f7fa; }
+        .cell-2 { background-color: #b2ebf2; }
+        .cell-3 { background-color: #80deea; }
+        .cell-4 { background-color: #4dd0e1; }
+    </style>
+</head>
+<body>
+    <h1>Arrow Puzzle Game - 9x9</h1>
+    <div id="grid" class="grid"></div>
+    <button onclick="resetGame()">重置遊戲</button>
+    <script>
+        const n = 9;  // 設置為 9x9
+        let grid = [];
+
+        // 初始化遊戲
+        function initializeGrid() {
+            const gridElement = document.getElementById('grid');
+            gridElement.style.gridTemplateColumns = `repeat(${n}, 30px)`;
+            grid = Array.from({ length: n }, () => Array.from({ length: n }, () => Math.floor(Math.random() * 4) + 1));
+            renderGrid();
+        }
+
+        // 渲染遊戲格子
+        function renderGrid() {
+            const gridElement = document.getElementById('grid');
+            gridElement.innerHTML = '';
+            for (let row = 0; row < n; row++) {
+                for (let col = 0; col < n; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = `cell cell-${grid[row][col]}`;
+                    cell.textContent = grid[row][col];
+                    cell.onclick = () => handleCellClick(row, col);
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        // 點擊處理
+        function handleCellClick(row, col) {
+            incrementCell(row, col);
+            if (checkWin()) alert("恭喜！你贏了！");
+            renderGrid();
+        }
+
+        // 增加格子和周圍的數字
+        function incrementCell(row, col) {
+            const directions = [[0, 0], [0, 1], [1, 0], [0, -1], [-1, 0], [1, 1], [1, -1], [-1, 1], [-1, -1]];
+            directions.forEach(([dr, dc]) => {
+                const nr = row + dr, nc = col + dc;
+                if (nr >= 0 && nr < n && nc >= 0 && nc < n) {
+                    grid[nr][nc] = grid[nr][nc] % 4 + 1;  // 循環數字1-4
+                }
+            });
+        }
+
+        // 檢查是否完成
+        function checkWin() {
+            return grid.every(row => row.every(cell => cell === 1));
+        }
+
+        // 重置遊戲
+        function resetGame() {
+            initializeGrid();
+        }
+
+        // 初始化遊戲
+        initializeGrid();
+    </script>
+</body>
+</html>
